@@ -5,75 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đồng hồ đếm ngược - Countdown Timer</title>
-    <style>
-        /* general styling */
-        :root {
-            --smaller: 0.75;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-        }
-
-        body {
-            align-items: center;
-            background-color: #ff814f;
-            display: flex;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-        }
-
-        .container {
-            color: #333;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        h1 {
-            font-weight: normal;
-            letter-spacing: 0.125rem;
-            text-transform: uppercase;
-        }
-
-        li {
-            display: inline-block;
-            font-size: 1.5em;
-            list-style-type: none;
-            padding: 1em;
-            text-transform: uppercase;
-        }
-
-        li span {
-            display: block;
-            font-size: 4.5rem;
-        }
-
-
-        @media all and (max-width: 768px) {
-            h1 {
-                font-size: calc(1.5rem * var(--smaller));
-            }
-
-            li {
-                font-size: calc(1.125rem * var(--smaller));
-            }
-
-            li span {
-                font-size: calc(3.375rem * var(--smaller));
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
-<body>
+<body class="body-clock">
     <div class="container">
         <h1 id="headline">Thời gian còn lại</h1>
         <div id="countdown">
@@ -94,24 +29,30 @@
 </body>
 <script>
     function confirmEmail() {
-        var email = document.getElementById("email").value;
 
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    // Xử lý phản hồi từ server
-                    alert(xhr.responseText);
-                } else {
-                    // Xử lý lỗi từ server
-                    alert("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+        var email = document.getElementById("email");
+        var email_value = email.value;
+        var email_placeholder = email.placeholder;
+        if (email_value != '') {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        // Xử lý phản hồi từ server
+                        alert(xhr.responseText);
+                    } else {
+                        // Xử lý lỗi từ server
+                        alert("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+                    }
                 }
-            }
-        };
+            };
 
-        xhr.open("POST", "clock_process.php", true);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.send("email=" + email);
+            xhr.open("POST", "clock_process.php", true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send("email=" + email_value);
+        } else {
+            alert(email_placeholder);
+        }
     }
 
     (function () {

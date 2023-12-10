@@ -5,41 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vòng Quay</title>
-    <style>
-        text {
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 11px;
-            pointer-events: none;
-        }
-
-        #chart {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            top: 0;
-            left: 0;
-        }
-
-        #link_gif {
-            position: absolute;
-            width: 400px;
-            height: 500px;
-            top: 0;
-            left: 520px;
-        }
-
-        #link_gif h1 {
-            font-size: 50px;
-            font-weight: bold;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            position: absolute;
-            padding: 0;
-            margin: 0;
-            top: 50%;
-            -webkit-transform: translate(0, -50%);
-            transform: translate(0, -50%);
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -47,14 +13,21 @@
         <source src="../file/NhacXoSo.mp3">
     </audio>
     <div class="container">
-        <div id="chart"></div>
-        <div id="link_gif">
-            <h1></h1>
+        <div class="d-flex justify-content-evenly">
+            <div id="chart"></div>
+            <div id="link_gif">
+                <div class="form-style-1" id="content">
+                    <form id="confirmationForm">
+                        <input type="text" id="email" name="email" placeholder="Nhập email" required>
+                        <button type="button" onclick="confirmEmail()">Xác nhận</button>
+                    </form>
+                </div>
+                <h1>Chưa quay</h1>
+                <img src="" alt="">
+            </div>
         </div>
-
-        <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-
     </div>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </body>
 <script>
     var padding = { top: 20, right: 40, bottom: 0, left: 0 },
@@ -114,11 +87,9 @@
             return data[i].label;
         });
     container.on("click", spin);
-    function spin(d) {
 
+    function spin(d) {
         container.on("click", null);
-        //all slices have been seen, all done
-        console.log("OldPick: " + oldpick.length, "Data length: " + data.length);
         if (oldpick.length == data.length) {
             console.log("done");
             container.on("click", null);
@@ -143,34 +114,34 @@
             .duration(3000)
             .attrTween("transform", rotTween)
             .each("end", function () {
-                //mark link_gif as seen
                 d3.select(".slice:nth-child(" + (picked + 1) + ") path")
                     .attr("fill", "#111");
-                //populate link_gif
-                d3.select("#link_gif h1")
-                    .text(data[picked].link_gif);
+                var linkGifDiv = d3.select("#link_gif");
+                linkGifDiv.select("h1")
+                    .text("Đã quay: " + data[picked].label);
+                linkGifDiv.select("img")
+                    .attr("src", data[picked].link_gif);
                 oldrotation = rotation;
-
-                /* Get the result value from object "data" */
                 console.log(data[picked].value)
-
-                /* Comment the below line for restrict spin to sngle time */
                 container.on("click", spin);
             });
     }
-    //make arrow
+
+    // make arrow
     svg.append("g")
         .attr("transform", "translate(" + (w + padding.left + padding.right) + "," + ((h / 2) + padding.top) + ")")
         .append("path")
         .attr("d", "M-" + (r * .15) + ",0L0," + (r * .05) + "L0,-" + (r * .05) + "Z")
         .style({ "fill": "black" });
-    //draw spin circle
+
+    // draw spin circle
     container.append("circle")
         .attr("cx", 0)
         .attr("cy", 0)
         .attr("r", 60)
         .style({ "fill": "white", "cursor": "pointer" });
-    //spin text
+
+    // spin text
     container.append("text")
         .attr("x", 0)
         .attr("y", 15)
@@ -183,21 +154,6 @@
         return function (t) {
             return "rotate(" + i(t) + ")";
         };
-    }
-
-    function getRandomNumbers() {
-        var array = new Uint16Array(1000);
-        var scale = d3.scale.linear().range([360, 1440]).domain([0, 100000]);
-        if (window.hasOwnProperty("crypto") && typeof window.crypto.getRandomValues === "function") {
-            window.crypto.getRandomValues(array);
-            console.log("works");
-        } else {
-            //no support for crypto, get crappy random numbers
-            for (var i = 0; i < 1000; i++) {
-                array[i] = Math.floor(Math.random() * 100000) + 1;
-            }
-        }
-        return array;
     }
 </script>
 
