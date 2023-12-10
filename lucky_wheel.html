@@ -10,20 +10,24 @@
 
 <body>
     <audio autoplay loop>
-        <source src="../file/NhacXoSo.mp3">
+        <source src="./file/NhacXoSo.mp3">
     </audio>
     <div class="container">
         <div class="d-flex justify-content-evenly">
             <div id="chart"></div>
             <div id="link_gif">
-                <div class="form-style-1" id="content">
-                    <form id="confirmationForm">
-                        <input type="text" id="email" name="email" placeholder="Nhập email" required>
-                        <button type="button" onclick="confirmEmail()">Xác nhận</button>
-                    </form>
+                <div class="d-flex flex-column">
+                    <div class="form-style-1" id="content">
+                        <form id="confirmationForm">
+                            <input type="text" id="email" name="email" placeholder="Nhập email" required>
+                            <button type="button" onclick="confirmEmail()">Xác nhận</button>
+                        </form>
+                    </div>
+                    <div class="">
+                        <h1>Chưa quay</h1>
+                        <img src="" alt="">
+                    </div>
                 </div>
-                <h1>Chưa quay</h1>
-                <img src="" alt="">
             </div>
         </div>
     </div>
@@ -86,7 +90,44 @@
         .text(function (d, i) {
             return data[i].label;
         });
-    container.on("click", spin);
+    container.on("click", confirmEmail);
+
+    function saveResult(email, gif) {
+        // Create a new XMLHttpRequest object
+        var xhr = new XMLHttpRequest();
+
+        // Prepare the request
+        xhr.open('POST', 'lucky_whell_process.php', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        // Set up the data to send
+        var data = 'email=' + encodeURIComponent(email) + '&gif=' + encodeURIComponent(gif);
+
+        // Set up the callback function
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                // The request was successful, you can handle the response here
+                console.log(xhr.responseText);
+            }
+        };
+
+        // Send the request
+        xhr.send(data);
+    }
+
+    function confirmEmail() {
+        var email = document.getElementById('email').value;
+        if (email.trim() !== '') {
+
+            // Call the spin function if needed
+            spin();
+            // Call the saveResult function with email and the selected gift
+            var selectedGift = data[picked].label;
+            setTimeout(100, saveResult(email, selectedGift));
+        } else {
+            alert('Please enter a valid email address.');
+        }
+    }
 
     function spin(d) {
         container.on("click", null);

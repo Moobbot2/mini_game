@@ -33,7 +33,7 @@
         var email = document.getElementById("email");
         var email_value = email.value;
         var email_placeholder = email.placeholder;
-        if (email_value != '') {
+        if (email_value.trim() !== '') {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4) {

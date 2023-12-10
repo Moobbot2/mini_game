@@ -138,3 +138,7 @@ text {
 .justify-content-evenly {
     justify-content: space-evenly;
 }
+
+.flex-column {
+    flex-direction: column;
+}
