@@ -28,7 +28,7 @@ function checkMethod()
     }
 }
 
-function checkEmailAndSaveGift($filePath, $email, $gif)
+function checkEmail($filePath, $email)
 {
     if (hasReceivedGift($filePath, $email)) {
         return [
@@ -37,17 +37,9 @@ function checkEmailAndSaveGift($filePath, $email, $gif)
         ];
     }
 
-    if ($gif == '') {
-        return [
-            'status' => false,
-            'mess' => "Phần quà không hợp lệ."
-        ];
-    }
-
-    saveGift($filePath, $email, date('Y-m-d H:i:s'), $gif);
     return [
         'status' => true,
-        'mess' => "Lưu kết quả thành công!"
+        'mess' => "Email chưa nhận quà."
     ];
 }
 
@@ -68,19 +60,6 @@ function hasReceivedGift($filePath, $email)
     return false;
 }
 
-function saveGift($filePath, $email, $currentTime, $gif)
-{
-    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
-    $sheet = $spreadsheet->getActiveSheet();
-    $lastRow = $sheet->getHighestRow() + 1;
-    $sheet->setCellValue('A' . $lastRow, $lastRow - 1);
-    $sheet->setCellValue('B' . $lastRow, $email);
-    $sheet->setCellValue('C' . $lastRow, $currentTime);
-    $sheet->setCellValue('D' . $lastRow, $gif);
-
-    $writer = new Xlsx($spreadsheet);
-    $writer->save($filePath);
-}
 
 // Main code
 $filePath = "lucky_whell.xlsx";
@@ -88,7 +67,6 @@ createSpreadsheet($filePath);
 checkMethod();
 
 $email = $_POST["email"];
-$gif = $_POST["gif"] ?? '';
 
-$result = checkEmailAndSaveGift($filePath, $email, $gif);
+$result = checkEmail($filePath, $email);
 echo json_encode($result);
