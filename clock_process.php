@@ -18,8 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!file_exists($filePath)) {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'Email');
-        $sheet->setCellValue('B1', 'Thời gian');
+        $sheet->setCellValue('A1', 'STT');
+        $sheet->setCellValue('B1', 'Email');
+        $sheet->setCellValue('C1', 'Thời gian ấn');
         $writer = new Xlsx($spreadsheet);
         $writer->save($filePath);
     }
@@ -28,15 +29,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
     $sheet = $spreadsheet->getActiveSheet();
     $lastRow = $sheet->getHighestRow() + 1;
-    $sheet->setCellValue('A' . $lastRow, $email);
-    $sheet->setCellValue('B' . $lastRow, $currentTime);
+    $sheet->setCellValue('A' . $lastRow, $lastRow - 1); // Giảm 1 để bắt đầu từ 1
+    $sheet->setCellValue('B' . $lastRow, $email);
+    $sheet->setCellValue('C' . $lastRow, $currentTime);
 
     $writer = new Xlsx($spreadsheet);
     $writer->save($filePath);
 
-    echo "Xác nhận thành công! Email và thời gian đã được lưu.";
+    echo "Xác nhận thành công!";
 } else {
-    // Nếu không phải là phương thức POST, chuyển hướng về trang chính
-    header("Location: clock.html");
-    exit();
+    // Nếu không phải là phương thức POST, trả về lỗi
+    header("HTTP/1.1 405 Method Not Allowed");
+    echo "Phương thức không được phép.";
 }

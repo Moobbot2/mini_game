@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Đồng hồ đếm ngược</title>
+    <title>Đồng hồ đếm ngược - Countdown Timer</title>
     <style>
         /* general styling */
         :root {
@@ -25,7 +25,7 @@
 
         body {
             align-items: center;
-            background-color: #ffd54f;
+            background-color: #ff814f;
             display: flex;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
                 Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -56,15 +56,6 @@
             font-size: 4.5rem;
         }
 
-        .emoji {
-            display: none;
-            padding: 1rem;
-        }
-
-        .emoji span {
-            font-size: 4rem;
-            padding: 0 0.5rem;
-        }
 
         @media all and (max-width: 768px) {
             h1 {
@@ -84,7 +75,7 @@
 
 <body>
     <div class="container">
-        <h1 id="headline">Thời gian kết thúc</h1>
+        <h1 id="headline">Thời gian còn lại</h1>
         <div id="countdown">
             <ul>
                 <li><span id="days"></span>days</li>
@@ -93,20 +84,36 @@
                 <li><span id="seconds"></span>Seconds</li>
             </ul>
         </div>
-        <div id="content" class="emoji">
-            <span>🥳</span>
-            <span>🎉</span>
-            <span>🎂</span>
-        </div>
-        <div class="form-style-1">
-            <form action="process.php" method="post">
-                <input type="text" name="email" placeholder="Nhập email" required>
-                <button type="submit">Xác nhận</button>
+        <div class="form-style-1" id="content">
+            <form id="confirmationForm">
+                <input type="text" id="email" name="email" placeholder="Nhập email" required>
+                <button type="button" onclick="confirmEmail()">Xác nhận</button>
             </form>
         </div>
     </div>
 </body>
 <script>
+    function confirmEmail() {
+        var email = document.getElementById("email").value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    // Xử lý phản hồi từ server
+                    alert(xhr.responseText);
+                } else {
+                    // Xử lý lỗi từ server
+                    alert("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+                }
+            }
+        };
+
+        xhr.open("POST", "clock_process.php", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send("email=" + email);
+    }
+
     (function () {
         const second = 1000,
             minute = second * 60,
@@ -120,8 +127,8 @@
             yyyy = today.getFullYear(),
             nextYear = yyyy + 1,
             dayMonth = "12/10/",
-            // Thêm thông tin về giờ, phút và giây vào ngày sinh nhật
-            birthday = dayMonth + yyyy + " 23:00:00";
+            // Thêm thông tin về giờ, phút và giây vào ngày
+            birthday = dayMonth + yyyy + " 20:00:00";
 
         today = mm + "/" + dd + "/" + yyyy;
 
@@ -139,11 +146,16 @@
                 document.getElementById("minutes").innerText = Math.floor((distance % hour) / minute);
                 document.getElementById("seconds").innerText = Math.floor((distance % minute) / second);
 
-                // Do something when the date is reached
+                // Thời gian về 0
                 if (distance < 0) {
-                    document.getElementById("headline").innerText = "It's my birthday!";
+                    document.getElementById("headline").innerText = "Thời gian kết thúc!";
                     document.getElementById("countdown").style.display = "none";
-                    document.getElementById("content").style.display = "block";
+                    document.getElementById("content").style.display = "none";
+
+                    // Ẩn hoặc xóa form
+                    var confirmationFormContainer = document.getElementById("confirmationFormContainer");
+                    confirmationFormContainer.innerHTML('');
+
                     clearInterval(x);
                 }
             }, 0);
