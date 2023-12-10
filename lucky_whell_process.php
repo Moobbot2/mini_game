@@ -27,21 +27,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $writer->save($filePath);
     }
 
-    // Ghi dữ liệu vào tệp Excel
-    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
-    $sheet = $spreadsheet->getActiveSheet();
-    $lastRow = $sheet->getHighestRow() + 1;
-    $sheet->setCellValue('A' . $lastRow, $lastRow - 1); // Giảm 1 để bắt đầu từ 1
-    $sheet->setCellValue('B' . $lastRow, $email);
-    $sheet->setCellValue('C' . $lastRow, $currentTime);
-    $sheet->setCellValue('D' . $lastRow, $gif);
+    // Check if the email has already received a gift
+    if (hasReceivedGift($filePath, $email)) {
+        echo "Email has already received a gift.";
+    } else {
+        // Ghi dữ liệu vào tệp Excel
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+        $sheet = $spreadsheet->getActiveSheet();
+        $lastRow = $sheet->getHighestRow() + 1;
+        $sheet->setCellValue('A' . $lastRow, $lastRow - 1); // Giảm 1 để bắt đầu từ 1
+        $sheet->setCellValue('B' . $lastRow, $email);
+        $sheet->setCellValue('C' . $lastRow, $currentTime);
+        $sheet->setCellValue('D' . $lastRow, $gif);
 
-    $writer = new Xlsx($spreadsheet);
-    $writer->save($filePath);
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filePath);
 
-    echo "Lưu kết quả thành công!";
+        echo "Lưu kết quả thành công!";
+    }
 } else {
     // Nếu không phải là phương thức POST, trả về lỗi
     header("HTTP/1.1 405 Method Not Allowed");
     echo "Phương thức không được phép.";
+}
+
+// Function to check if the email has received a gift
+function hasReceivedGift($filePath, $email)
+{
+    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+    $sheet = $spreadsheet->getActiveSheet();
+    $highestRow = $sheet->getHighestRow();
+
+    // Loop through rows to check if the email has already received a gift
+    for ($row = 2; $row <= $highestRow; $row++) {
+        $cellValue = $sheet->getCell('B' . $row)->getValue();
+        if ($cellValue == $email) {
+            return true; // Email has already received a gift
+        }
+    }
+
+    return false; // Email has not received a gift
 }
