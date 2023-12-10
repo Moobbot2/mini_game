@@ -84,7 +84,7 @@
 
 <body>
     <div class="container">
-        <h1 id="headline">Countdown to my birthday</h1>
+        <h1 id="headline">Thời gian kết thúc</h1>
         <div id="countdown">
             <ul>
                 <li><span id="days"></span>days</li>
@@ -97,6 +97,12 @@
             <span>🥳</span>
             <span>🎉</span>
             <span>🎂</span>
+        </div>
+        <div class="form-style-1">
+            <form action="process.php" method="post">
+                <input type="text" name="email" placeholder="Nhập email" required>
+                <button type="submit">Xác nhận</button>
+            </form>
         </div>
     </div>
 </body>
@@ -113,9 +119,9 @@
             mm = String(today.getMonth() + 1).padStart(2, "0"),
             yyyy = today.getFullYear(),
             nextYear = yyyy + 1,
-            dayMonth = "09/30/",
+            dayMonth = "12/10/",
             // Thêm thông tin về giờ, phút và giây vào ngày sinh nhật
-            birthday = dayMonth + yyyy + " 00:00:00";
+            birthday = dayMonth + yyyy + " 23:00:00";
 
         today = mm + "/" + dd + "/" + yyyy;
 
